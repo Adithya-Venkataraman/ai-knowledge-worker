@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.env
+!.env.example
+node_modules/
+.next/
+uploads/
+*.db
+.DS_Store
+pgdata/
+redisdata/
