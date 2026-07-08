@@ -14,10 +14,10 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY: str = ""
     OPENAI_API_KEY: str = ""
     COHERE_API_KEY: str = ""
-
+    GROQ_API_KEY: str = ""
     # Embeddings
     EMBEDDING_MODEL: str = "text-embedding-3-small"
-    EMBEDDING_DIM: int = 1536
+    EMBEDDING_DIM: int = 384
 
     # App
     ENVIRONMENT: str = "development"

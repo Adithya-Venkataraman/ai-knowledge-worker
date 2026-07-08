@@ -16,7 +16,7 @@ async def semantic_search(
     """Find most similar chunks to the query using vector search."""
 
     query_embedding = await embed_query(query)
-    embedding_str = str(query_embedding)
+    embedding_str = "[" + ",".join(str(x) for x in query_embedding) + "]"
 
     result = await db.execute(
         text("""
@@ -24,10 +24,10 @@ async def semantic_search(
                 dc.id,
                 dc.content,
                 dc.document_id,
-                1 - (dc.embedding <=> :embedding::vector) as similarity
+                1 - (dc.embedding <=> CAST(:embedding AS vector)) as similarity
             FROM document_chunks dc
             WHERE dc.embedding IS NOT NULL
-            ORDER BY dc.embedding <=> :embedding::vector
+            ORDER BY dc.embedding <=> CAST(:embedding AS vector)
             LIMIT :top_k
         """),
         {"embedding": embedding_str, "top_k": top_k}
@@ -43,8 +43,6 @@ async def semantic_search(
         }
         for row in rows
     ]
-
-
 async def bm25_search(
     query: str,
     db: AsyncSession,
