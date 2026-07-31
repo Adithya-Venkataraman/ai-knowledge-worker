@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from app.api.routes.documents import router as documents_router
 from app.core.config import settings
 from app.db.session import engine
 from app.models.base import Base
@@ -34,7 +34,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+app.include_router(documents_router, prefix="/api/documents", tags=["documents"])
 @app.get("/health")
 async def health():
     return {"status": "ok", "version": "0.1.0"}
