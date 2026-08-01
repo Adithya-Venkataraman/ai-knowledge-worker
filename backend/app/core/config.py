@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file="../.env", extra="ignore")
+    model_config = SettingsConfigDict(env_file="../../.env", extra="ignore")
 
     # Database
     DATABASE_URL: str = "postgresql+asyncpg://aikw:aikw_secret@localhost:5433/aikw"
@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     # App
     ENVIRONMENT: str = "development"
     SECRET_KEY: str = "dev_secret"
-    UPLOAD_DIR: str = "/app/uploads"
+    UPLOAD_DIR: str = "/home/jingv/ai-knowledge-worker/uploads"
     MAX_UPLOAD_MB: int = 50
     CHUNK_SIZE: int = 512
     CHUNK_OVERLAP: int = 64

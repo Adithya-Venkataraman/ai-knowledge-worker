@@ -2,7 +2,7 @@ from typing import TypedDict, Annotated
 import operator
 import structlog
 from langgraph.graph import StateGraph, END
-from langchain_groq import ChatGroq
+from langchain_ollama import ChatOllama
 from app.core.config import settings
 
 log = structlog.get_logger()
@@ -19,9 +19,9 @@ class AgentState(TypedDict):
 
 
 
-llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    api_key=settings.GROQ_API_KEY,
+llm = ChatOllama(
+    model="llama3.2",
+    base_url="http://172.28.240.1:11434",
 )
 
 
