@@ -1,8 +1,11 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pathlib import Path
 
+# Get the absolute path to .env file
+ENV_FILE = Path(__file__).parent.parent.parent.parent / ".env"
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file="../../.env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=str(ENV_FILE), extra="ignore")
 
     # Database
     DATABASE_URL: str = "postgresql+asyncpg://aikw:aikw_secret@localhost:5433/aikw"
@@ -15,6 +18,7 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = ""
     COHERE_API_KEY: str = ""
     GROQ_API_KEY: str = ""
+
     # Embeddings
     EMBEDDING_MODEL: str = "text-embedding-3-small"
     EMBEDDING_DIM: int = 384

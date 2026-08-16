@@ -87,3 +87,21 @@ async def get_document(doc_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
         "error": doc.error,
         "created_at": doc.created_at.isoformat()
     }
+
+@router.delete("/{doc_id}")
+async def delete_document(doc_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    doc = await db.get(Document, doc_id)
+    if not doc:
+        raise HTTPException(404, "Document not found")
+    
+    # delete file from disk
+    import shutil
+    upload_path = Path(settings.UPLOAD_DIR) / str(doc_id)
+    if upload_path.exists():
+        shutil.rmtree(upload_path)
+    
+    # delete from database
+    await db.delete(doc)
+    await db.commit()
+    
+    return {"message": "Document deleted successfully"}
