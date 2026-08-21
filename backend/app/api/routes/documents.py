@@ -94,14 +94,24 @@ async def delete_document(doc_id: uuid.UUID, db: AsyncSession = Depends(get_db))
     if not doc:
         raise HTTPException(404, "Document not found")
     
+    # delete chunks using raw SQL
+    from sqlalchemy import text
+    await db.execute(
+        text("DELETE FROM document_chunks WHERE document_id = :doc_id"),
+        {"doc_id": str(doc_id)}
+    )
+    
     # delete file from disk
     import shutil
     upload_path = Path(settings.UPLOAD_DIR) / str(doc_id)
     if upload_path.exists():
         shutil.rmtree(upload_path)
     
-    # delete from database
-    await db.delete(doc)
+    # delete document
+    await db.execute(
+        text("DELETE FROM documents WHERE id = :doc_id"),
+        {"doc_id": str(doc_id)}
+    )
     await db.commit()
     
     return {"message": "Document deleted successfully"}
