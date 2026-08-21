@@ -27,7 +27,19 @@ def _parse_pdf(file_path: Path) -> str:
     reader = PdfReader(str(file_path))
     text = ""
     for page in reader.pages:
-        text += page.extract_text() or ""
+        extracted = page.extract_text()
+        if extracted:
+            text += extracted
+
+    # if no text extracted, try OCR
+    if not text.strip():
+        log.info("parser.pdf_falling_back_to_ocr")
+        try:
+            text = _parse_pdf_ocr(file_path)
+        except Exception as e:
+            log.error("parser.ocr_failed", error=str(e))
+            text = ""
+
     return text
 
 
@@ -36,3 +48,14 @@ def _parse_docx(file_path: Path) -> str:
     log.info("parser.docx", path=str(file_path))
     doc = Document(str(file_path))
     return "\n".join([para.text for para in doc.paragraphs])
+
+def _parse_pdf_ocr(file_path: Path) -> str:
+    """OCR fallback using pymupdf."""
+    import fitz  # pymupdf
+    log.info("parser.pdf_ocr", path=str(file_path))
+    doc = fitz.open(str(file_path))
+    text = ""
+    for page in doc:
+        text += page.get_text()
+    doc.close()
+    return text
